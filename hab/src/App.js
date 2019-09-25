@@ -2,26 +2,45 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Login from './containers/Login';
+import Register from './containers/Register';
 import loginReducer from './reducers/Login';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+
 const { useReducer } = React;
 
 function App() {
   const initialState = {
-		userName: '',
+    userName: '',
 	};
 	
-	const [state, dispatch] = useReducer(loginReducer, initialState);
+  const [state, dispatch] = useReducer(loginReducer, initialState);
 
 	const loginSubmit = (loginState) => {
-		console.log(loginState);
 		dispatch({type: 'LOGIN', ...loginState});
+  }
+
+  const logout = () => {
+    dispatch({type: 'LOGOUT', userName: ''});
+  }
+
+  const registerSubmit = (registerState) => {
+    dispatch({type: 'REGISTER', ...registerState});
   }
 
   return (
     <div className="App">
-      <header className="App-header">
-        <Login state={state} loginSubmit={loginSubmit} />
-      </header>
+      <Router>
+        <Switch>
+          <Route path="/register">
+            <Register registerSubmit={registerSubmit} />
+          </Route>
+          <Route path="/">
+            <header className="App-header">
+              <Login state={state} loginSubmit={loginSubmit} logout={logout} />
+            </header>
+          </Route>
+        </Switch>
+      </Router>
     </div>
   );
 }
