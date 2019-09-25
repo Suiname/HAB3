@@ -1,40 +1,48 @@
+import { Link } from 'react-router-dom'
 import React from 'react';
-const { useState } = React;
+import useForm from '../hooks/useForm';
 
 const Login = (props) => {
-
-	const { state, loginSubmit } = props;
-
-	const [loginState, setUsername] = useState({
+	const initialState = {
 		userName: '',
-		password: ''
-	});
+		password: '',
+	}
+	const { state, loginSubmit, logout } = props;
+	const { values, handleChange, handleSubmit, resetValues } = useForm(initialState, loginSubmit);
+	const { userName, password } = values;
 
-	const onChange = (property) => (e) => {
-		// console.log(e.target.value);
-		setUsername({
-			...loginState,
-			[property]: e.target.value,
-		});
+	const logoutClick = () => {
+		resetValues();
+		logout();
 	}
 
 	return(
 		<div>
-			{ !!state.userName && <h1>hello {state.userName}</h1>}
+			{ !!state.userName &&
+				<div>
+					<div>
+						<h1>hello {state.userName}</h1>
+					</div>
+					<div>
+						<button onClick={logoutClick}>Logout</button>
+					</div>
+				</div>
+			}
 
 			{ !state.userName && 
-			<form>
-				<input type="text" id="userName" name="userName" value={loginState.userName} onChange={onChange('userName')} >
+			<form onSubmit={handleSubmit}>
+				<input type="text" id="userName" name="userName" onChange={handleChange} value={userName} >
 				</input>
 				<label htmlFor="userName">
 					Username
 				</label>
-				<input type="text" id="password" name="password" value={loginState.password} onChange={onChange('password')}>
+				<input type="text" id="password" name="password" onChange={handleChange} value={password} >
 				</input>
 				<label htmlFor="password">
 					Password
 				</label>
-				<button onClick={() => loginSubmit(loginState)}>Submit</button>
+				<button type="submit">Submit</button>
+				<Link to="/register"><button>Register</button></Link>
 			</form>}
 		</div>
 	);
