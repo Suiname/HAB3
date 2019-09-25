@@ -1,6 +1,6 @@
 version: '3.6'
-services:
 
+services:
   traefik:
     image: "traefik:v2.0.0-rc3"
     container_name: "traefik"
@@ -15,25 +15,35 @@ services:
       - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - web 
+
   postgres:
     image: postgres
     restart: always
     volumes:
-      - db_data:/var/lib/postgresql/data
-    labels:
-      - traefik.enable=false
-
-  hasura:
+    - db_data:/var/lib/postgresql/data
+    networks:
+      - web
+  graphql-engine:
     image: hasura/graphql-engine:v1.0.0-beta.6
-    container_name: "hasura-gql"
+    networks:
+      - web 
     labels:
+      # - "traefik.http.routers.whoami.rule=Host(`localhost`)"
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.whoami.rule=Host(`localhost`)"
+      # - "traefik.http.routers.whoami.entrypoints=web"
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      # - "traefik.http.routers.whoami.entrypoints=web"
+      # - "traefik.frontend.rule=Host:whoami.localhost"
+      # - "traefik.port=80"
+      - "traefik.backend=whoami"
+      - "traefik.domain=xenial.test"
+      - "traefik.frontend.rule=Host:whoami.xenial.test"
+      - "traefik.frontend.entryPoints=http"
       - "traefik.enable=true"
-      # - "entryPoints.name.address=:8000"
-      # - "traefik.frontend.rule=Host:graphql.localhost"
-      - "traefik.http.routers.gql.rule=Host(`gql.localhost`)"
-      - "traefik.http.routers.gql.entrypoints=web"
-    ports:
-      - "8000:8000"
     depends_on:
     - "postgres"
     restart: always
@@ -41,29 +51,11 @@ services:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
-      HASURA_GRAPHQL_SERVER_PORT: 8000
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
-
-  frontend:
-    build:
-      context: .
-      dockerfile: ./docker/frontend/Dockerfile
-    volumes:
-      - './hab:/app'
-      - '/app/node_modules'
-    container_name: "node-react"
-    volumes:
-      - ./hab:/app
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`HAB.localhost`)"
-      - "traefik.http.routers.frontend.entrypoints=web"
-    ports:
-      - "3000:3000"
-    depends_on:
-    - "postgres"
-    - "hasura"
-
 volumes:
   db_data:
+networks:
+  web:
+    external:
+      name: traefik_webgateway

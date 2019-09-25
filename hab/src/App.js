@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Login from './containers/Login';
 import Register from './containers/Register';
@@ -11,7 +10,7 @@ const { useReducer } = React;
 function App() {
   const initialState = {
     userName: '',
-	};
+  };
 	
   const [state, dispatch] = useReducer(loginReducer, initialState);
 
