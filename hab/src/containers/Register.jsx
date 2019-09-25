@@ -1,5 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
 import useForm from '../hooks/useForm';
 
 const Register = (props) => {
@@ -8,11 +10,27 @@ const Register = (props) => {
 		password: '',
 		email: '',
 	}
+	const REGISTER_MUTATION = gql`
+	mutation InsertUser($username: String!, $password: String!) {
+		insert_Users(objects: {username: $username, password: $password}) {
+		  returning {
+			id
+			password
+			username
+			created_at
+		  }
+		}
+	  }
+	  `;
+
+	const [registerUser] = useMutation(REGISTER_MUTATION);
+
 	const { registerSubmit, history } = props;
-	const { values, handleChange, handleSubmit } = useForm(initialState, registerSubmit);
+	const { values, handleChange, } = useForm(initialState, registerSubmit);
 	const { userName, password, email } = values;
 	const onSubmit = (e) => {
-		handleSubmit(e);
+		e.preventDefault();
+		registerUser({ variables: { username: userName, password } });
 		history.push('/');
 	}
 
