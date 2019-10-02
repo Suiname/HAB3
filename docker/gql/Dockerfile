@@ -2,15 +2,16 @@
 FROM node
 
 # set working directory
-WORKDIR /app
-
+WORKDIR /gql
 # add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
-COPY ./hab/package.json .
+ENV PATH /gql/node_modules/.bin:$PATH
+COPY ./gql/package.json .
+
 # install and cache app dependencies
 RUN npm install --silent
-RUN npm install react-scripts@3.0.1 -g --silent
 
-COPY ./hab .
+COPY ./gql .
+
+
 # start app
 CMD ["npm", "start"]
