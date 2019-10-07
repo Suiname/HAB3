@@ -5,13 +5,18 @@ const formatDate = (date) => {
 };
 
 const getUsersQuery = async () => {
-	const result = await db.sequelize.query(`SELECT * FROM users`, { type: db.sequelize.QueryTypes.SELECT});
-	return result.map(({id, username, password, created_at, updated_at }) => ({ id, username, password, createdAt: formatDate(created_at), updatedAt: formatDate(updated_at) }))
+	const result = await db.sequelize.query(`SELECT id, username, email, created_at, updated_at, type FROM users`, { type: db.sequelize.QueryTypes.SELECT});
+	return result.map(({id, username, email, created_at, updated_at, type }) => ({ id, username, email, createdAt: formatDate(created_at), updatedAt: formatDate(updated_at), type }))
 };
 
 const resolvers = {
 	Query: {
-		users: async () => await getUsersQuery(),
+		users: async (_parent, _, { user }) => {
+				if (user && user.type === 'admin') {
+				return await getUsersQuery();
+			}
+			throw new Error('Not Authorized');
+		},
 	},
 };
 
