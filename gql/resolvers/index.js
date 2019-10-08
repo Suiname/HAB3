@@ -1,4 +1,8 @@
+const fetch = require('node-fetch');
+require('dotenv').config();
+
 const db  = require('../models');
+const { BASE_URL: baseUrl } = process.env;
 
 const formatDate = (date) => {
 	return !!date ? date.toLocaleDateString() +' '+ date.toLocaleTimeString() : '';
@@ -12,10 +16,21 @@ const getUsersQuery = async () => {
 const resolvers = {
 	Query: {
 		users: async (_parent, _, { user }) => {
-				if (user && user.type === 'admin') {
+			if (user && user.type === 'admin') {
 				return await getUsersQuery();
 			}
 			throw new Error('Not Authorized');
+		},
+	},
+	Mutation: {
+		login: async (_parent, {username, password}, _context) => {
+			const response = await fetch(baseUrl + '/auth/login', {
+				method: 'post',
+				body:    JSON.stringify({ username, password }),
+				headers: { 'Content-Type': 'application/json' },
+			})
+			const { token } = await response.json();
+			return { jwt: token };
 		},
 	},
 };

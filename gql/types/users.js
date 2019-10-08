@@ -8,7 +8,7 @@ const typeDefs = gql`
 
   # This "Book" type defines the queryable fields for every book in our data source.
   type User {
-	id: ID
+    id: ID
     username: String
     email: String
     type: String
@@ -16,8 +16,16 @@ const typeDefs = gql`
     updatedAt: String
   }
 
+  type Token {
+    jwt: String
+  }
+
   type Query {
     users: [User]
+  }
+
+  type Mutation {
+    login(username: String!, password: String!): Token
   }
 `;
 

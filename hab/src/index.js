@@ -2,12 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
-import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "shards-ui/dist/css/shards.min.css"
+
 const client = new ApolloClient({
-	uri: 'http://gql.localhost/v1/graphql',
+	uri: 'http://gql.localhost/graphql',
 });
 
 ReactDOM.render(<ApolloProvider client={client}>
