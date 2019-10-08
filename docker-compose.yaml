@@ -58,6 +58,9 @@ services:
     volumes:
       - ./hab:/app
     container_name: "node-react"
+    networks:
+      static-network:
+        ipv4_address: 172.18.0.8
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`HAB.localhost`)"

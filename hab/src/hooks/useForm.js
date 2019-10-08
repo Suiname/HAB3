@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-const useForm = (initialState, callback) => {
+const useForm = (initialState, submitCallback) => {
 
   const [values, setValues] = useState(initialState);
 
   const handleSubmit = (event) => {
     !!event && event.preventDefault();
-    callback(values);
+    submitCallback(values);
   };
 
   const handleChange = (event) => {
@@ -19,8 +19,8 @@ const useForm = (initialState, callback) => {
   return {
     handleChange,
     handleSubmit,
-	values,
-	resetValues,
+    values,
+    resetValues,
   }
 };
 

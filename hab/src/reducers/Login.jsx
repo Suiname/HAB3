@@ -4,11 +4,13 @@ const reducer = (state, action) => {
 		return {
 		  ...state,
 		  userName: action.userName,
+		  token: action.token,
 		};
 	  case "LOGOUT":
 		return {
 		  ...state,
 		  userName: null,
+		  token: null,
 		}
 	  default:
 		return state;
