@@ -24,6 +24,7 @@ services:
     networks:
       static-network:
         ipv4_address: 172.18.0.7
+    container_name: "postgres"
     restart: always
     ports:
       - "5432:5432"
@@ -41,6 +42,7 @@ services:
         ipv4_address: 172.18.0.6
     volumes:
       - ./gql:/gql
+    container_name: "gql-react"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.gql.rule=Host(`gql.localhost`)"
@@ -63,7 +65,7 @@ services:
         ipv4_address: 172.18.0.8
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`HAB.localhost`)"
+      - "traefik.http.routers.frontend.rule=Host(`react.localhost`)"
       - "traefik.http.routers.frontend.entrypoints=web"
     ports:
       - "3000:3000"

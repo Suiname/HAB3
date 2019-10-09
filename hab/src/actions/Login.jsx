@@ -1,5 +1,5 @@
 const actions = (dispatch, sideEffects) => {
-	const { login } = sideEffects;
+	const { login, register } = sideEffects;
 	const loginSubmit = async (loginState) => {
 		const { userName, password } = loginState;
 		const response = await login({ variables: { userName, password }})
@@ -11,8 +11,11 @@ const actions = (dispatch, sideEffects) => {
 		dispatch({type: 'LOGOUT', userName: ''});
 	}
 
-	const registerSubmit = (registerState) => {
-		dispatch({type: 'REGISTER', ...registerState});
+	const registerSubmit = async (registerState) => {
+		const { userName } = registerState;
+		const response = await register({ variables: registerState})
+		const token = response.data.register.jwt;
+		dispatch({type: 'REGISTER', userName, token});
 	}
 
 	return {

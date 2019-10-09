@@ -1,6 +1,7 @@
 const reducer = (state, action) => {
 	switch (action.type) {
 	  case "LOGIN":
+	  case "REGISTER":
 		return {
 		  ...state,
 		  userName: action.userName,

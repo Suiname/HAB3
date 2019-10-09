@@ -25,11 +25,20 @@ function App() {
     }
   }
 `;
+
+const REGISTER = gql`
+mutation Register($userName: String!, $password: String!, $email: String!){
+  register(username: $userName, password: $password, email: $email){
+    jwt
+  }
+}
+`;
 	
   const [state, dispatch] = useReducer(loginReducer, initialState);
   const [login] = useMutation(LOGIN);
+  const [register] = useMutation(REGISTER);
 
-  const { loginSubmit, logout, registerSubmit } = createLoginActions(dispatch, {login});
+  const { loginSubmit, logout, registerSubmit } = createLoginActions(dispatch, {login, register});
 
   return (
     <div className="App">
