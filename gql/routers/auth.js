@@ -21,7 +21,7 @@ router.post('/login', async (req, res, _next) => {
 			res.status(403).send('Incorrect username / password');
 		}
 	} catch (error) {
-		res.status(500).send('Internal Server Error');
+		res.status(500).send('Internal Server Error	');
 	}
 });
 
@@ -29,7 +29,7 @@ router.post('/register', async (req, res, _next) => {
 	try {
 		const {username, email, password} = req.body;
 		const id = uuid();
-		const hash = await bcrypt.hash(password, saltRounds);
+		const hash = await bcrypt.hash(password, parseInt(saltRounds));
 		await sequelize.query(`INSERT INTO users (id, username, password, email) VALUES (:id, :username, :hash, :email)`, { replacements:  {id, username, hash, email}, type: sequelize.QueryTypes.SELECT});
 		try {
 			const [user] = await sequelize.query(`SELECT * from users where id = :id`, { replacements: {id}, type: sequelize.QueryTypes.SELECT});

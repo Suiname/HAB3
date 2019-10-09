@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
+import { Form, FormGroup, FormInput, Button, Container, Row, Col } from 'shards-react';
+
 import useForm from '../hooks/useForm';
 
 const Register = (props) => {
@@ -10,50 +10,45 @@ const Register = (props) => {
 		password: '',
 		email: '',
 	}
-	const REGISTER_MUTATION = gql`
-	mutation InsertUser($username: String!, $password: String!) {
-		insert_Users(objects: {username: $username, password: $password}) {
-		  returning {
-			id
-			password
-			username
-			created_at
-		  }
-		}
-	  }
-	  `;
-
-	const [registerUser] = useMutation(REGISTER_MUTATION);
 
 	const { registerSubmit, history } = props;
-	const { values, handleChange, } = useForm(initialState, registerSubmit);
+	const { values, handleChange } = useForm(initialState);
 	const { userName, password, email } = values;
-	const onSubmit = (e) => {
+	const onSubmit = async (e) => {
 		e.preventDefault();
-		registerUser({ variables: { username: userName, password } });
+		await registerSubmit(values);
 		history.push('/');
 	}
 
 	return(
-		<div>
-			<form onSubmit={onSubmit}>
-				<input type="text" id="userName" name="userName" onChange={handleChange} value={userName} >
-				</input>
-				<label htmlFor="userName">
-					Username
-				</label>
-				<input type="text" id="password" name="password" onChange={handleChange} value={password} >
-				</input>
-				<label htmlFor="password">
-					Password
-				</label>
-				<input type="text" id="email" name="email" onChange={handleChange} value={email} >
-				</input>
-				<label htmlFor="email">
-					email
-				</label>
-				<button type="submit">Submit</button>
-			</form>
+		<div className="mt-5">
+			<Container className="registerContainer">
+				<Row>
+					<Col sm="12" md={{ size: 8, offset: 2 }}>
+						<Form onSubmit={onSubmit}>
+							<FormGroup>
+								<Col sm={{ size:8, offset: 2 }}>
+								<label htmlFor="userName">
+									Username
+								</label>
+								<FormInput id="userName" name="userName" onChange={handleChange} value={userName} />
+								<label htmlFor="password">
+									Password
+								</label>
+								<FormInput type="password" id="password" name="password" onChange={handleChange} value={password} />
+								<label htmlFor="email">
+									Email
+								</label>
+								<FormInput id="email" name="email" onChange={handleChange} value={email} />
+								</Col>
+								<Col sm={{ size: 8, offset: 2 }} className="text-center mt-2">
+									<Button type="submit">Submit</Button>
+								</Col>
+							</FormGroup>
+						</Form>
+					</Col>
+				</Row>
+			</Container>
 		</div>
 	);
 }
