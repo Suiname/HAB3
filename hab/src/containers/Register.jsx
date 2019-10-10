@@ -2,21 +2,21 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Form, FormGroup, FormInput, Button, Container, Row, Col } from 'shards-react';
 
-import useForm from '../hooks/useForm';
+import { useRegisterAction } from '../actions/Register';
 
 const Register = (props) => {
+	const { history } = props;
 	const initialState = {
 		userName: '',
 		password: '',
 		email: '',
 	}
-
-	const { registerSubmit, history } = props;
-	const { values, handleChange } = useForm(initialState);
+	const { values, handleChange, registerAction } = useRegisterAction(initialState);
 	const { userName, password, email } = values;
+
 	const onSubmit = async (e) => {
 		e.preventDefault();
-		await registerSubmit(values);
+		await registerAction();
 		history.push('/');
 	}
 

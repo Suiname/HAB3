@@ -1,15 +1,16 @@
 import React from 'react';
 import { Form, FormGroup, FormInput, Button, ButtonGroup, Container, Row, Col } from 'shards-react';
-import useForm from '../hooks/useForm';
-import LinkButton from '../components/LinkButton';
 
-const Login = (props) => {
+import LinkButton from '../components/LinkButton';
+import { useLoginAction } from '../actions/Login';
+
+const Login = () => {
 	const initialState = {
 		userName: '',
 		password: '',
 	}
-	const { loginSubmit } = props;
-	const { values, handleChange, handleSubmit } = useForm(initialState, loginSubmit);
+
+	const { values, handleChange, loginAction } = useLoginAction(initialState);
 	const { userName, password } = values;
 
 	return(
@@ -17,7 +18,7 @@ const Login = (props) => {
 			<Container className="loginContainer">
 				<Row>
 					<Col sm="12" md={{ size: 8, offset: 2 }}>
-						<Form onSubmit={handleSubmit}>
+						<Form>
 							<FormGroup>
 								<Col sm={{ size: 8, offset: 2 }}>
 									<label htmlFor="username">Username</label>
@@ -27,7 +28,7 @@ const Login = (props) => {
 								</Col>
 								<Col sm={{ size: 8, offset: 2 }} className="text-center mt-2">
 									<ButtonGroup size="sm">
-										<Button type="submit">Login</Button>
+										<Button onClick={loginAction}>Login</Button>
 										<LinkButton to="/register">Register</LinkButton>
 									</ButtonGroup>
 								</Col>
