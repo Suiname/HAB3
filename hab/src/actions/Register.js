@@ -11,9 +11,15 @@ export const useRegisterAction = (initialState) => {
 	const { userName } = values;
 
 	const registerAction = async () => {
-		const response = await register({ variables: values })
-		const token = response.data.register.jwt;
-		dispatch({type: 'REGISTER', userName, token});
+		try {
+			dispatch({type: 'REGISTER_REQUEST'});
+			const response = await register({ variables: values })
+			const token = response.data.register.jwt;
+			localStorage.setItem('token', token);
+			dispatch({type: 'REGISTER', userName, token});
+		} catch (error) {
+			dispatch({type: 'REGISTER_ERROR', error});
+		}
 	}
 
 	return {

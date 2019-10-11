@@ -7,3 +7,10 @@ mutation Login($userName: String!, $password: String!){
 	}
 }
 `;
+
+export const VERIFY = gql`
+mutation Verify($token: String!){
+	verify(token: $token){
+		username
+	}
+}`;

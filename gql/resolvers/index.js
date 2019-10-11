@@ -19,7 +19,11 @@ const postJSON = async (url, params) => {
 		body:    JSON.stringify(params),
 		headers: { 'Content-Type': 'application/json' },
 	});
-	return await response.json();
+	if (response.status < 400) {
+		return await response.json();
+	} else { // some sort of error
+		throw new Error(`Server responded with ${response.status}`);
+	}
 }
 
 const resolvers = {
@@ -34,15 +38,18 @@ const resolvers = {
 	Mutation: {
 		login: async (_parent, {username, password}, _context) => {
 			const url = baseUrl + '/auth/login';
-			const params = { username, password };
-			const { token } = await postJSON(url, params);
+			const { token } = await postJSON(url, { username, password });
 			return { jwt: token };
 		},
 		register: async (_parent, {username, password, email}, _context) => {
 			const url = baseUrl + '/auth/register';
-			const params = { username, password, email };
-			const { token } = await postJSON(url, params);
+			const { token } = await postJSON(url, { username, password, email });
 			return { jwt: token };
+		},
+		verify: async (_parent, { token }, _context) => {
+			const url = baseUrl + '/auth/verify';
+			const { username } = await postJSON(url, { token });
+			return { username };
 		},
 	},
 };

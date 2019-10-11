@@ -8,9 +8,14 @@ const typeDefs = gql`
     jwt: String
   }
 
+  type DecodedToken {
+    username: String
+  }
+
   type Mutation {
-	login(username: String!, password: String!): Token
-	register(username: String!, password: String!, email: String!): Token
+    login(username: String!, password: String!): Token
+    register(username: String!, password: String!, email: String!): Token
+    verify(token: String!): DecodedToken
   }
 `;
 
