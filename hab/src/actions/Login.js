@@ -9,10 +9,17 @@ export const useLoginAction = (initialState) => {
 	const [login] = useMutation(LOGIN);
 
 	const loginAction = async () => {
-		const { userName } = values;
-		const response = await login({ variables: values })
-		const token = response.data.login.jwt;
-		dispatch({type: 'LOGIN', userName, token});
+		try {
+			dispatch({type: 'LOGIN_REQUEST'});
+			const { userName } = values;
+			const response = await login({ variables: values })
+			const token = response.data.login.jwt;
+			localStorage.setItem('token', token);
+			dispatch({type: 'LOGIN', userName, token});
+		} catch (error) {
+			dispatch({type: 'LOGIN_ERROR', error});
+		}
+		
 	}
 
 	return {

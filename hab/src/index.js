@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { StateProvider } from './state';
 import loginReducer from './reducers/Login';
-
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css"
@@ -17,7 +17,9 @@ const client = new ApolloClient({
 
 const initialState = {
     userName: '',
-    token: '',
+	token: '',
+	loading: false,
+	error: null,
   };
 
 ReactDOM.render(<ApolloProvider client={client}>
