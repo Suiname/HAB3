@@ -5,25 +5,30 @@ import { ApolloProvider } from '@apollo/react-hooks';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { StateProvider } from './state';
-import loginReducer from './reducers/Login';
+import { StateProvider, initialState } from './state';
+import { combineReducers, loginReducer, profileReducer } from './reducers';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css"
 
 const client = new ApolloClient({
 	uri: 'http://gql.localhost/graphql',
+	request: operation => {
+		const token = localStorage.getItem('token');
+		if (token) {
+			operation.setContext({
+				headers: {
+				  authorization: 'Bearer ' + token,
+				},
+			});
+		}
+	  },
 });
 
-const initialState = {
-    userName: '',
-	token: '',
-	loading: false,
-	error: null,
-  };
+const reducer = combineReducers({login: loginReducer, profile: profileReducer});
 
 ReactDOM.render(<ApolloProvider client={client}>
-	    <StateProvider initialState={initialState} reducer={loginReducer}>
+	    <StateProvider initialState={initialState} reducer={reducer}>
 			<App />
 		</StateProvider>
 	</ApolloProvider>, document.getElementById('root'));
