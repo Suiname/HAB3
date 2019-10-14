@@ -20,8 +20,7 @@ const params = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 }
 
-const strategy = new Strategy(params, async (payload, done) => {
-  const { id } = payload;
+const strategy = new Strategy(params, async ({ id }, done) => {
   const [user] = await sequelize.query(`SELECT * from users where id = :id`, { replacements:  { id }, type: sequelize.QueryTypes.SELECT})
 
   return done(null, user);

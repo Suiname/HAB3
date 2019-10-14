@@ -13,10 +13,11 @@ const checkCredentials = async (username, password) => {
 	const [result] = await sequelize.query(`SELECT * FROM users where username = :username`, { replacements: {username}, type: sequelize.QueryTypes.SELECT});
 	if (result) {
 		const match = await bcrypt.compare(password, result.password);
-		return match;
-	} else {
-		return null;
+		if (match) {
+			return result;
+		}
 	}
+	return null;
 }
 
 const userExists = async (username) => {
@@ -29,9 +30,9 @@ router.post('/login', async (req, res, _next) => {
 		const { username, password } = req.body;
 		const match = await checkCredentials(username, password);
 		if (match) {
-			const { email, type } = match;
-			const payload = { username, email, type }
-			const token = jwt.sign(payload, JWT_SECRET);
+			const { id, email, type } = match;
+			const payload = { id, username, email, type }
+			const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "24h"});
 			return res.send({token});
 		} else {
 			return res.status(403).send('Incorrect username / password');

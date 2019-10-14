@@ -7,18 +7,26 @@ import Home from './components/Home';
 import Loading from './components/Loading';
 import Navbar from './components/Navbar';
 import { useStateValue } from './state';
-import { useReturnAction, useLogoutAction } from './actions';
+import { useReturnAction, useLogoutAction, useFetchMeAction } from './actions';
 
 function App() {
-  const [{ userName, token, loading }] = useStateValue();
+  const [{login, profile}] = useStateValue();
+  const { userName, token, loading } = login;
   const { returnAction } = useReturnAction();
   const { logoutAction } = useLogoutAction();
-  const localToken = localStorage.getItem('token', token);
+  const { fetchMeAction } = useFetchMeAction();
+  const localToken = localStorage.getItem('token');
+  const loggedIn = userName && token;
 
   useEffect(() => {
-    const returningWithToken = !loading && !userName && !token && localToken;
+    const returningWithToken = !loading && !loggedIn && localToken;
     returningWithToken && returnAction({ token: localToken});
   });
+
+  useEffect(() => {
+    const loadUserProfile = !profile.loading && loggedIn && !profile.profile;
+    loadUserProfile && fetchMeAction();
+  })
 
   return (
       <div className="App">
@@ -32,11 +40,11 @@ function App() {
               <header className="App-header">
               </header>
               <Loading open={loading} />
-                { !userName && !token &&
+                { !loggedIn &&
                   <Login />
                 }
-                { !!userName && !!token &&
-                  <Home userName={userName} />
+                { loggedIn &&
+                  <Home profile={profile.profile} />
                 }
             </Route>
           </Switch>

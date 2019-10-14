@@ -9,3 +9,16 @@ export const StateProvider = ({reducer, initialState, children}) =>(
 );
 
 export const useStateValue = () => useContext(StateContext);
+
+export const initialState = {
+  login: {
+    userName: '',
+    token: '',
+    loading: false,
+    error: null,
+  },
+  profile: {
+    profile: null,
+    loading: false,
+  },
+};
