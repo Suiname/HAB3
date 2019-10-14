@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Form, FormGroup, FormInput, Button, Container, Row, Col } from 'shards-react';
 
-import { useRegisterAction } from '../actions/Register';
+import { useRegisterAction } from '../actions';
 
 const Register = (props) => {
 	const { history } = props;
