@@ -26,6 +26,7 @@ const reducer = (state, action) => {
 	  case "RETURN_ERROR":
 	  case "LOGIN_ERROR":
 	  case "REGISTER_ERROR":
+	  case "LOGOUT_ERROR":
 		  return{
 			  ...state,
 			  error: action.error,

@@ -5,7 +5,6 @@ import { BallBeat } from 'react-pure-loaders';
 
 const LoadingModal = (props) => {
 	const { open } = props;
-	console.log('loading state: ', open);
 	return (
 		<Modal open={open} fade={false} backdrop={true} size={"xl"} centered={true}>
 			<ModalBody>

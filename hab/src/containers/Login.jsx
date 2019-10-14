@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, FormGroup, FormInput, Button, ButtonGroup, Container, Row, Col } from 'shards-react';
 
 import LinkButton from '../components/LinkButton';
-import { useLoginAction } from '../actions/Login';
+import { useLoginAction } from '../actions';
 
 const Login = () => {
 	const initialState = {
