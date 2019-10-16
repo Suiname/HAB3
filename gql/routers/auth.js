@@ -5,12 +5,11 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 const uuid = require('uuid/v4');
 
-const db = require('../models');
-const { sequelize } = db;
 const { JWT_SECRET, SALT_ROUNDS: saltRounds } = process.env;
+const { users } = require('../models');
 
 const checkCredentials = async (username, password) => {
-	const [result] = await sequelize.query(`SELECT * FROM users where username = :username`, { replacements: {username}, type: sequelize.QueryTypes.SELECT});
+	const result = await users.findOne({ where: {username} });
 	if (result) {
 		const match = await bcrypt.compare(password, result.password);
 		if (match) {
@@ -21,8 +20,8 @@ const checkCredentials = async (username, password) => {
 }
 
 const userExists = async (username) => {
-	const result = await sequelize.query(`SELECT * FROM users where username = :username`, { replacements: {username}, type: sequelize.QueryTypes.SELECT});
-	return !!result.length;
+	const result = await users.findOne({ where: {username}, raw: true });
+	return !!result;
 };
 
 router.post('/login', async (req, res, _next) => {
@@ -47,14 +46,11 @@ router.post('/register', async (req, res, _next) => {
 		const {username, email, password} = req.body;
 		const id = uuid();
 		const hash = await bcrypt.hash(password, parseInt(saltRounds));
-		await sequelize.query(`INSERT INTO users (id, username, password, email) VALUES (:id, :username, :hash, :email)`, { replacements:  {id, username, hash, email}, type: sequelize.QueryTypes.SELECT});
-		try {
-			const [user] = await sequelize.query(`SELECT * from users where id = :id`, { replacements: {id}, type: sequelize.QueryTypes.SELECT});
-			const token = jwt.sign(user, JWT_SECRET, {expiresIn: "24h"});
-			return res.send({token});
-		} catch (error) {
-			return res.status(500).send('Error Retrieving New User');
-		}
+		await users.create({ id, username, password: hash, email });
+		const user = await users.findOne({ where: { id }, raw: true });
+		delete user.password;
+		const token = jwt.sign(user, JWT_SECRET, {expiresIn: "24h"});
+		return res.send({token});
 	} catch (error) {
 		return res.status(500).send('Error Inserting User');
 	}

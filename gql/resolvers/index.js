@@ -1,22 +1,8 @@
 const fetch = require('node-fetch');
 require('dotenv').config();
 
-const db  = require('../models');
 const { BASE_URL: baseUrl } = process.env;
-
-const formatDate = (date) => {
-	return !!date ? date.toLocaleDateString() +' '+ date.toLocaleTimeString() : '';
-};
-
-const getUsersQuery = async () => {
-	const result = await db.sequelize.query(`SELECT id, username, email, created_at, updated_at, type FROM users`, { type: db.sequelize.QueryTypes.SELECT});
-	return result.map(({id, username, email, created_at, updated_at, type }) => ({ id, username, email, createdAt: formatDate(created_at), updatedAt: formatDate(updated_at), type }))
-};
-
-const getUsersByIdQuery = async (id) => {
-	const result = await db.sequelize.query(`SELECT id, username, email, created_at, updated_at, type FROM users where id = :id`, { replacements: { id }, type: db.sequelize.QueryTypes.SELECT});
-	return result.map(({id, username, email, created_at, updated_at, type }) => ({ id, username, email, createdAt: formatDate(created_at), updatedAt: formatDate(updated_at), type }))
-};
+const { users } = require('../models');
 
 const postJSON = async (url, params) => {
 	const response = await fetch(url, {
@@ -26,24 +12,24 @@ const postJSON = async (url, params) => {
 	});
 	if (response.status < 400) {
 		return await response.json();
-	} else { // some sort of error
+	} else { // some sort of error status code
 		throw new Error(`Server responded with ${response.status}`);
 	}
 }
 
 const resolvers = {
 	Query: {
-		users: async (_parent, _, { user }) => {
+		users: async (_parent, options, { user }) => {
 			if (user && user.type === 'admin') {
-				return await getUsersQuery();
+				const {limit = 10, offset = 0} = options;
+				return await users.findAll({ limit, offset });
 			}
 			throw new Error('Not Authorized');
 		},
 		me: async (_parent, _, { user }) => {
 			if (user) {
 				const { id } = user;
-				const result = await getUsersByIdQuery(id);
-				return result[0];
+				return await users.findByPk(id);
 			}
 			throw new Error('Not Authorized');
 		}
