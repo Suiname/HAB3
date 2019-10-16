@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const resolvers = require('./resolvers');
 const typeDefs = require('./types');
 const authRouter = require('./routers/auth');
-const { sequelize } = require('./models');
+const { users } = require('./models');
 
 const { GRAPHQL_PORT, JWT_SECRET } = process.env
 
@@ -21,8 +21,7 @@ const params = {
 }
 
 const strategy = new Strategy(params, async ({ id }, done) => {
-  const [user] = await sequelize.query(`SELECT * from users where id = :id`, { replacements:  { id }, type: sequelize.QueryTypes.SELECT})
-
+  const user = await users.findOne({ where: { id } });
   return done(null, user);
 })
 

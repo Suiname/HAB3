@@ -1,5 +1,4 @@
 const reducer = (state, action) => {
-	console.log('fetch action: ', action);
 	switch (action.type) {
 	  case "FETCH_ME_REQUEST":
 	  case "FETCH_ME_LOADING":
